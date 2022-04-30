@@ -1,0 +1,13 @@
+/* Allows the buttons at the bottom of the Form and Present pages to be on the same line */
+
+.form-bottom-buttons {
+    display: grid;
+    grid-template-columns: 0fr 0fr 0fr;
+    grid-gap: 20px;
+}
+
+.presentation-bottom-buttons {
+    display: grid;
+    grid-template-columns: 0fr 0fr 0fr 0fr 1fr;
+    grid-gap: 20px;
+}

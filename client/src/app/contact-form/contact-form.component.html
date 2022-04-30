@@ -1,0 +1,180 @@
+<div class="container">
+    <!-- Home Page -->
+    <div [hidden]="page != 0">
+        <!-- Title -->
+        <h1>Online Contacts Inforamtion</h1>
+
+        <!-- Find (POST) botton -->
+        <br>
+        <button type="button" class="btn btn-primary" (click)="requestType = 'GET'; page = 1">Find contact</button>
+
+        <!-- Add (GET) botton -->
+        <br><br>
+        <button type="button" class="btn btn-primary" (click)="requestType = 'POST'; page = 1">Add contact</button>
+    </div>
+
+    <!-- Form Page -->
+    <div [hidden]="page != 1">
+        <!-- Titles -->
+        <div [hidden]="requestType != 'GET'">
+            <h1>Get Contact Form</h1>
+        </div>
+        <div [hidden]="requestType != 'POST'">
+            <h1>Add Contact Form</h1>
+        </div>
+        <div [hidden]="requestType != 'PUT'">
+            <h1>Edit Contact Form</h1>
+        </div>
+
+        <!-- Form -->
+        <form (ngSubmit)="onSubmit()" #contactForm="ngForm">
+            <!-- First Name Form -->
+            <div class="form-group">
+                <label for="FirstName">First Name</label>
+                <input type="text" class="form-control" id="FirstName" required [(ngModel)]="model.FirstName"
+                    name="FirstName" #FirstName="ngModel">
+                <!-- Validation alert - show only in POST mode -->
+                <div [hidden]="requestType == 'GET' || FirstName.valid || FirstName.pristine"
+                    class="alert alert-danger">
+                    First Name is required
+                </div>
+            </div>
+
+            <!-- Last Name Form -->
+            <div class="form-group">
+                <label for="LastName">Last Name</label>
+                <input type="text" class="form-control" id="LastName" required [(ngModel)]="model.LastName"
+                    name="LastName" #LastName="ngModel">
+                <!-- Validation alert - show only in POST mode -->
+                <div [hidden]="requestType == 'GET' || LastName.valid || LastName.pristine" class="alert alert-danger">
+                    Last Name is required
+                </div>
+            </div>
+
+            <!-- Age Form -->
+            <div class="form-group">
+                <label for="Age">Age</label>
+                <input type="number" class="form-control" id="Age" required [(ngModel)]="model.Age" name="Age"
+                    #Age="ngModel">
+                <!-- Validation alert - show only in POST mode -->
+                <div [hidden]="requestType == 'GET' || Age.valid || Age.pristine" class="alert alert-danger">
+                    Age is required
+                </div>
+            </div>
+
+            <!-- Phone Number Form - show only in POST mode -->
+            <div [hidden]="requestType == 'GET'" class="form-group">
+                <label for="PhoneNumber">Phone Number</label>
+                <input type="text" class="form-control" id="PhoneNumber" required [(ngModel)]="model.PhoneNumber"
+                    [pattern]="mobilePhoneNumberPattern" name="PhoneNumber" #PhoneNumber="ngModel">
+                <!-- Validation alert - no need to double check POST mode -->
+                <div [hidden]="PhoneNumber.valid || PhoneNumber.pristine" class="alert alert-danger">
+                    Phone Number is invalid
+                </div>
+            </div>
+
+            <!-- Bottom buttons -->
+            <div class="form-bottom-buttons">
+                <!-- Back button -->
+                <button type="button" class="btn btn-primary"
+                    (click)="backToHomePage(); contactForm.reset()">Back</button>
+
+                <!-- Add (GET) botton -->
+                <div [hidden]="requestType != 'GET'">
+                    <button type="submit" class="btn btn-success"
+                        [disabled]="model.Age == null && model.FirstName == '' && model.LastName == ''">Find</button>
+                </div>
+
+                <!-- Find (POST) botton -->
+                <div [hidden]="requestType != 'POST'">
+                    <button type="submit" class="btn btn-success" [disabled]="!contactForm.form.valid">Add</button>
+                </div>
+
+                <!-- Save (PUT) botton -->
+                <div [hidden]="requestType != 'PUT'">
+                    <button type="submit" class="btn btn-success" [disabled]="!contactForm.form.valid">Save</button>
+                </div>
+
+                <!-- New Contact button -->
+                <button type="button" class="btn btn-default" (click)="newContact(); contactForm.reset()">New
+                    Contact</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Present Page -->
+    <div [hidden]="page != 2">
+        <!-- Titles -->
+        <div [hidden]="requestType != 'GET'">
+            <div [hidden]="!isEditable">
+                <h1>Found these matches:</h1>
+            </div>
+
+            <div [hidden]="isEditable">
+                <h1>Failed to find a contact for these values:</h1>
+            </div>
+        </div>
+
+        <div [hidden]="requestType != 'POST'">
+            <div [hidden]="!isEditable">
+                <h1>You submitted the following contact:</h1>
+            </div>
+
+            <div [hidden]="isEditable">
+                <h1>Failed to add this contact:</h1>
+            </div>
+        </div>
+
+        <div [hidden]="requestType != 'DELETE'">
+            <h1>Deleted this contact:</h1>
+        </div>
+
+        <!-- Values presentation -->
+        <div class="row">
+            <div class="col-xs-3">First Name</div>
+            <div class="col-xs-9">{{ shownContact.FirstName }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-3">Last Name</div>
+            <div class="col-xs-9">{{ shownContact.LastName }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-3">Age</div>
+            <div class="col-xs-9">{{ shownContact.Age }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-3">Phone Number</div>
+            <div class="col-xs-9">{{ shownContact.PhoneNumber }}</div>
+        </div>
+
+
+        <!-- Bottom buttons -->
+        <div class="presentation-bottom-buttons">
+            <!-- Back botton -->
+            <button type="button" class="btn btn-default" (click)="page = 1">Back</button>
+
+            <!-- Edit botton (send back to the form page where the edited values could be saved (PUT)) -->
+            <div [hidden]="!isEditable">
+                <button type="button" class="btn btn-primary" (click)="edit()">Edit</button>
+            </div>
+
+            <!-- Delete (DELETE) botton -->
+            <div [hidden]="!isEditable">
+                <button type="button" class="btn btn-primary" (click)="delete()">Delete</button>
+            </div>
+
+            <!-- Previous contact botton -->
+            <div [hidden]="!hasContacts">
+                <button type="button" class="btn btn-success" (click)="previous()">Previous</button>
+            </div>
+
+            <!-- Next contact botton -->
+            <div [hidden]="!hasContacts">
+                <button type="button" class="btn btn-success" (click)="next()">Next</button>
+            </div>
+        </div>
+    </div>
+</div>

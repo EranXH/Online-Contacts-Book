@@ -1,0 +1,37 @@
+# === CLIENT ===
+
+# Compiled output
+/client/dist
+/client/tmp
+/client/out-tsc
+/client/bazel-out
+
+# Node
+/client/node_modules
+/client/npm-debug.log
+/client/yarn-error.log
+
+# IDEs and editors
+/client/.idea/
+/client/.project
+/client/.classpath
+/client/.c9/
+/client/*.launch
+/client/.settings/
+/client/*.sublime-workspace
+
+# Miscellaneous
+/client/.angular/cache
+/client/.sass-cache/
+/client/connect.lock
+/client/coverage
+/client/libpeerconnection.log
+/client/testem.log
+/client/typings
+
+# System files
+.DS_Store
+Thumbs.db
+
+# === SERVER ===
+/server/node_modules
